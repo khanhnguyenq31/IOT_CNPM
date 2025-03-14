@@ -1,6 +1,6 @@
 const Device = require('../models/Device');
 
-// Get all devices
+// Get all devices - không cần filter theo userId
 exports.getAllDevices = async (req, res) => {
   try {
     const devices = await Device.find();
@@ -10,7 +10,7 @@ exports.getAllDevices = async (req, res) => {
   }
 };
 
-// Get single device
+// Get single device - không cần filter theo userId
 exports.getDevice = async (req, res) => {
   try {
     const device = await Device.findById(req.params.id);
@@ -23,11 +23,17 @@ exports.getDevice = async (req, res) => {
   }
 };
 
-// Create device
+// Create device - lưu userId của người tạo
 exports.createDevice = async (req, res) => {
   try {
     const { name, type, status, location } = req.body;
-    const device = new Device({ name, type, status, location });
+    const device = new Device({ 
+      name, 
+      type, 
+      status, 
+      location,
+      userId: req.user.userId // userId của người tạo
+    });
     await device.save();
     res.status(201).json(device);
   } catch (err) {
@@ -35,13 +41,19 @@ exports.createDevice = async (req, res) => {
   }
 };
 
-// Update device
+// Update device - cập nhật userId là người chỉnh sửa cuối cùng
 exports.updateDevice = async (req, res) => {
   try {
     const { name, type, status, location } = req.body;
     const device = await Device.findByIdAndUpdate(
       req.params.id,
-      { name, type, status, location },
+      { 
+        name, 
+        type, 
+        status, 
+        location,
+        userId: req.user.userId // cập nhật userId là người chỉnh sửa cuối
+      },
       { new: true }
     );
     if (!device) {
@@ -53,7 +65,7 @@ exports.updateDevice = async (req, res) => {
   }
 };
 
-// Delete device
+// Delete device - không cần filter theo userId
 exports.deleteDevice = async (req, res) => {
   try {
     const device = await Device.findByIdAndDelete(req.params.id);

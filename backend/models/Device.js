@@ -8,7 +8,7 @@ const DeviceSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['PUMP', 'SENSOR'] // Add device types as needed
+    enum: ['PUMP', 'SENSOR']
   },
   status: {
     type: String,
@@ -20,6 +20,11 @@ const DeviceSchema = new mongoose.Schema({
     type: String,
     required: true,
     default: 'Undefined'
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   }
 }, {
   timestamps: true

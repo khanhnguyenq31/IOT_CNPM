@@ -5,15 +5,17 @@ const sendEmail = require('../utils/email');
 
 exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-
+    const { username, email, password } = req.body;
+    if (!email || ! password || !username) {
+      return res.status(400).json({ message: 'Vui lòng nhập đầy đủ thông tin.' });
+    }
     let user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({ message: 'Email đã tồn tại' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    user = new User({ name, email, password: hashedPassword });
+    user = new User({ username, email, password: hashedPassword });
     await user.save();
 
     res.status(201).json({ message: 'Tạo tài khoản thành công' });
@@ -24,20 +26,24 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body; 
+    if (!email || ! password) {
+      return res.status(400).json({ message: 'Vui lòng nhập email và mật khẩu.' });
+    }
     const user = await User.findOne({ email });
+   
     
     if (!user) {
-      return res.status(400).json({ message: 'Email hoặc mật khẩu không đúng' });
+      return res.status(400).json({ message: 'Email không đúng.' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Email hoặc mật khẩu không đúng' });
+      return res.status(400).json({ message: 'Mật khẩu không đúng.' });
     }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
+    res.json({ token, user: { id: user._id, username: user.username, email: user.email } });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

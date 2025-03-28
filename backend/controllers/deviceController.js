@@ -23,45 +23,64 @@ exports.getDevice = async (req, res) => {
   }
 };
 
-// Create device - lưu userId của người tạo
+// Create device
 exports.createDevice = async (req, res) => {
   try {
-    const { name, type, status, location } = req.body;
-    const device = new Device({ 
-      name, 
-      type, 
-      status, 
+    const { name, location } = req.body;
+
+    // Create new device with default feed values
+    const device = new Device({
+      name,
       location,
-      userId: req.user.userId // userId của người tạo
+      feeds: {
+        temperature: '0',
+        humidity: '0',
+        soil: '0'
+      },
+      userId: req.user.userId  // Thay đổi từ req.user.id thành req.user.userId
     });
-    await device.save();
-    res.status(201).json(device);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+
+    const savedDevice = await device.save();
+
+    res.status(201).json({
+      success: true,
+      data: savedDevice
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
   }
 };
 
-// Update device - cập nhật userId là người chỉnh sửa cuối cùng
+// Update device
 exports.updateDevice = async (req, res) => {
   try {
-    const { name, type, status, location } = req.body;
+    const { name, location } = req.body;
+
     const device = await Device.findByIdAndUpdate(
       req.params.id,
-      { 
-        name, 
-        type, 
-        status, 
-        location,
-        userId: req.user.userId // cập nhật userId là người chỉnh sửa cuối
-      },
-      { new: true }
+      { name, location },
+      { new: true, runValidators: true }
     );
+
     if (!device) {
-      return res.status(404).json({ message: 'Không tìm thấy thiết bị' });
+      return res.status(404).json({
+        success: false,
+        error: 'Device not found'
+      });
     }
-    res.json(device);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+
+    res.status(200).json({
+      success: true,
+      data: device
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
   }
 };
 

@@ -3,14 +3,14 @@ const router = express.Router();
 const deviceController = require('../controllers/deviceController');
 const auth = require('../middleware/auth');
 
-// Apply authentication middleware to all routes
 router.use(auth);
 
-// Device routes
-router.get('/', deviceController.getAllDevices);
-router.get('/:id', deviceController.getDevice);
+// Create device
 router.post('/', deviceController.createDevice);
+
+// Update device
 router.put('/:id', deviceController.updateDevice);
-router.delete('/:id', deviceController.deleteDevice);
+
+// ...other routes...
 
 module.exports = router;

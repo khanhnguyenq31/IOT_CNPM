@@ -18,4 +18,7 @@ router.get('/latest/:deviceId/:sensorType', sensorController.getLatestSensorData
 // Create new sensor data
 router.post('/', sensorController.createSensorData);
 
+// Add this to your existing routes
+router.post('/publish', sensorController.publishSensorCommand);
+
 module.exports = router;

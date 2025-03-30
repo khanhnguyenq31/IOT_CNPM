@@ -11,6 +11,7 @@ const deviceRoutes = require('./routes/device');
 const sensorRoutes = require('./routes/sensor');
 const waterProcessRoutes = require('./routes/waterProcess');
 const activationConditionRoutes = require('./routes/activationCondition');
+const historyRoutes = require('./routes/history');
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use('/api/devices', deviceRoutes);
 app.use('/api/sensor-data', sensorRoutes);
 app.use('/api/water-processes', waterProcessRoutes);
 app.use('/api/activation-conditions', activationConditionRoutes);
+app.use('/api/history', historyRoutes);
 
 // Cleanup MQTT connection on server shutdown
 process.on('SIGINT', () => {

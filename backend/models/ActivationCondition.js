@@ -24,10 +24,6 @@ const ActivationConditionSchema = new mongoose.Schema({
       min: Number,
       max: Number
     },
-    soilMoisture: {
-      min: Number,
-      max: Number
-    },
     humidity: {
       min: Number,
       max: Number

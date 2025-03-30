@@ -1,4 +1,5 @@
 const ActivationCondition = require('../models/ActivationCondition');
+const mqttService = require('../services/mqttService');
 
 // Get all activation conditions
 exports.getAllConditions = async (req, res) => {
@@ -28,13 +29,29 @@ exports.getDeviceConditions = async (req, res) => {
 exports.createCondition = async (req, res) => {
   try {
     const { deviceId, waterProcessId, description, conditions } = req.body;
+
+    // Validate conditions
+    if (!conditions.temperature || !conditions.humidity) {
+      return res.status(400).json({ 
+        message: 'Điều kiện phải bao gồm nhiệt độ và độ ẩm' 
+      });
+    }
+
     const activationCondition = new ActivationCondition({
       deviceId,
       waterProcessId,
       description,
-      conditions
+      conditions: {
+        temperature: conditions.temperature,
+        humidity: conditions.humidity
+      }
     });
+
     const newCondition = await activationCondition.save();
+
+    // Publish thresholds to Adafruit
+    await mqttService.publishThresholds(deviceId, conditions);
+
     res.status(201).json(newCondition);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -45,17 +62,30 @@ exports.createCondition = async (req, res) => {
 exports.updateCondition = async (req, res) => {
   try {
     const { description, conditions, flag } = req.body;
-    const condition = await ActivationCondition.findByIdAndUpdate(
-      req.params.id,
-      { description, conditions, flag },
-      { new: true }
-    )
-    .populate('deviceId', 'name location')
-    .populate('waterProcessId', 'startTime duration');
+    const condition = await ActivationCondition.findById(req.params.id);
     
     if (!condition) {
       return res.status(404).json({ message: 'Không tìm thấy điều kiện kích hoạt' });
     }
+
+    // Validate conditions if provided
+    if (conditions && (!conditions.temperature || !conditions.humidity)) {
+      return res.status(400).json({ 
+        message: 'Điều kiện phải bao gồm nhiệt độ và độ ẩm' 
+      });
+    }
+
+    // Update condition
+    condition.description = description || condition.description;
+    if (conditions) {
+      condition.conditions = conditions;
+      // Publish new thresholds to Adafruit
+      await mqttService.publishThresholds(condition.deviceId, conditions);
+    }
+    condition.flag = flag !== undefined ? flag : condition.flag;
+
+    await condition.save();
+
     res.json(condition);
   } catch (err) {
     res.status(400).json({ message: err.message });

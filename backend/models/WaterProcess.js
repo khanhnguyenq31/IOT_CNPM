@@ -10,18 +10,28 @@ const WaterProcessSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
-  duration: {
-    type: Number, // Duration in minutes
-    required: true,
-    min: 1
+  tempControlled: {
+    type: Boolean,
+    default: false
+  },
+  humidControlled: {
+    type: Boolean,
+    default: false
+  },
+  manualControl: {
+    type: Boolean,
+    default: false
+  },
+  pumpSpeed: {
+    type: Number,
+    min: 0,
+    max: 100,
+    default: 0
   },
   status: {
     type: String,
     enum: ['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'FAILED'],
     default: 'SCHEDULED'
-  },
-  notes: {
-    type: String
   }
 }, {
   timestamps: true

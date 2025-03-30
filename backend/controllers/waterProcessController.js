@@ -1,4 +1,5 @@
 const WaterProcess = require('../models/WaterProcess');
+const mqttService = require('../services/mqttService');
 
 // Get all water processes
 exports.getAllWaterProcesses = async (req, res) => {
@@ -27,15 +28,72 @@ exports.getDeviceWaterProcesses = async (req, res) => {
 // Schedule new water process
 exports.scheduleWaterProcess = async (req, res) => {
   try {
-    const { deviceId, startTime, duration, notes } = req.body;
+    const { deviceId, startTime, tempControlled, humidControlled, manualControl, pumpSpeed } = req.body;
+
     const waterProcess = new WaterProcess({
       deviceId,
       startTime,
-      duration,
-      notes
+      tempControlled,
+      humidControlled,
+      manualControl,
+      pumpSpeed
     });
+
     const newProcess = await waterProcess.save();
+    
+    // Update MQTT feeds based on controls
+    if (tempControlled) {
+      await mqttService.publishToDeviceFeed(deviceId, 'tempswitch', '1');
+    }
+    if (humidControlled) {
+      await mqttService.publishToDeviceFeed(deviceId, 'humidswitch', '1');
+    }
+    if (manualControl) {
+      await mqttService.publishToDeviceFeed(deviceId, 'pump', '1');
+    }
+    // Update pump speed
+    await mqttService.publishToDeviceFeed(deviceId, 'speed', pumpSpeed.toString());
+
     res.status(201).json(newProcess);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// Update water process controls
+exports.updateProcessControls = async (req, res) => {
+  try {
+    const { tempControlled, humidControlled, manualControl, pumpSpeed } = req.body;
+    const process = await WaterProcess.findById(req.params.id);
+    
+    if (!process) {
+      return res.status(404).json({ message: 'Không tìm thấy quy trình tưới nước' });
+    }
+
+    // Validate pump speed
+    if (pumpSpeed !== undefined && (pumpSpeed < 0 || pumpSpeed > 100)) {
+      return res.status(400).json({ message: 'Tốc độ bơm phải từ 0 đến 100' });
+    }
+
+    // Update process controls
+    process.tempControlled = tempControlled;
+    process.humidControlled = humidControlled;
+    process.manualControl = manualControl;
+    if (pumpSpeed !== undefined) {
+      process.pumpSpeed = pumpSpeed;
+    }
+    
+    await process.save();
+
+    // Update MQTT feeds
+    await mqttService.publishToDeviceFeed(process.deviceId, 'tempswitch', tempControlled ? '1' : '0');
+    await mqttService.publishToDeviceFeed(process.deviceId, 'humidswitch', humidControlled ? '1' : '0');
+    await mqttService.publishToDeviceFeed(process.deviceId, 'pump', manualControl ? '1' : '0');
+    if (pumpSpeed !== undefined) {
+      await mqttService.publishToDeviceFeed(process.deviceId, 'speed', pumpSpeed.toString());
+    }
+
+    res.json(process);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

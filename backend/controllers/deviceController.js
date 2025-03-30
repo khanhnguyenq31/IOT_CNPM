@@ -1,4 +1,5 @@
 const Device = require('../models/Device');
+const mqttService = require('../services/mqttService');
 
 // Get all devices - không cần filter theo userId
 exports.getAllDevices = async (req, res) => {
@@ -26,21 +27,34 @@ exports.getDevice = async (req, res) => {
 // Create device
 exports.createDevice = async (req, res) => {
   try {
-    const { name, location } = req.body;
+    const { name, location, usernameaio, keyaio } = req.body;
 
-    // Create new device with default feed values
+    // Validate required fields
+    if (!name || !location || !usernameaio || !keyaio) {
+      return res.status(400).json({
+        success: false,
+        error: 'Vui lòng nhập đầy đủ thông tin thiết bị'
+      });
+    }
+
+    // Create new device
     const device = new Device({
       name,
       location,
+      usernameaio,
+      keyaio,
       feeds: {
         temperature: '0',
         humidity: '0',
         soil: '0'
       },
-      userId: req.user.userId  // Thay đổi từ req.user.id thành req.user.userId
+      userId: req.user.userId
     });
 
     const savedDevice = await device.save();
+
+    // Initialize MQTT connection for the new device
+    mqttService.updateCredentials(usernameaio, keyaio);
 
     res.status(201).json({
       success: true,
@@ -57,20 +71,23 @@ exports.createDevice = async (req, res) => {
 // Update device
 exports.updateDevice = async (req, res) => {
   try {
-    const { name, location } = req.body;
-
+    const { name, location, usernameaio, keyaio } = req.body;
+    
     const device = await Device.findByIdAndUpdate(
       req.params.id,
-      { name, location },
+      { name, location, usernameaio, keyaio },
       { new: true, runValidators: true }
     );
 
     if (!device) {
       return res.status(404).json({
         success: false,
-        error: 'Device not found'
+        error: 'Không tìm thấy thiết bị'
       });
     }
+
+    // Update MQTT connection if credentials changed
+    mqttService.updateCredentials(usernameaio, keyaio);
 
     res.status(200).json({
       success: true,

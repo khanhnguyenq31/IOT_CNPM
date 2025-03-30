@@ -15,6 +15,9 @@ router.get('/device/:deviceId', waterProcessController.getDeviceWaterProcesses);
 // Schedule new water process
 router.post('/', waterProcessController.scheduleWaterProcess);
 
+// Update water process controls
+router.patch('/:id/controls', waterProcessController.updateProcessControls);
+
 // Update water process status
 router.patch('/:id/status', waterProcessController.updateWaterProcessStatus);
 

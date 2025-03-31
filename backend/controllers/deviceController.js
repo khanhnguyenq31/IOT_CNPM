@@ -1,4 +1,5 @@
 const Device = require('../models/Device');
+const mqttService = require('../services/mqttService');
 
 // Get all devices - không cần filter theo userId
 exports.getAllDevices = async (req, res) => {
@@ -23,45 +24,80 @@ exports.getDevice = async (req, res) => {
   }
 };
 
-// Create device - lưu userId của người tạo
+// Create device
 exports.createDevice = async (req, res) => {
   try {
-    const { name, type, status, location } = req.body;
-    const device = new Device({ 
-      name, 
-      type, 
-      status, 
+    const { name, location, usernameaio, keyaio } = req.body;
+
+    // Validate required fields
+    if (!name || !location || !usernameaio || !keyaio) {
+      return res.status(400).json({
+        success: false,
+        error: 'Vui lòng nhập đầy đủ thông tin thiết bị'
+      });
+    }
+
+    // Create new device
+    const device = new Device({
+      name,
       location,
-      userId: req.user.userId // userId của người tạo
+      usernameaio,
+      keyaio,
+      feeds: {
+        temperature: '0',
+        humidity: '0',
+        soil: '0'
+      },
+      userId: req.user.userId
     });
-    await device.save();
-    res.status(201).json(device);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+
+    const savedDevice = await device.save();
+
+    // Initialize MQTT connection for the new device
+    mqttService.updateCredentials(usernameaio, keyaio);
+
+    res.status(201).json({
+      success: true,
+      data: savedDevice
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
   }
 };
 
-// Update device - cập nhật userId là người chỉnh sửa cuối cùng
+// Update device
 exports.updateDevice = async (req, res) => {
   try {
-    const { name, type, status, location } = req.body;
+    const { name, location, usernameaio, keyaio } = req.body;
+    
     const device = await Device.findByIdAndUpdate(
       req.params.id,
-      { 
-        name, 
-        type, 
-        status, 
-        location,
-        userId: req.user.userId // cập nhật userId là người chỉnh sửa cuối
-      },
-      { new: true }
+      { name, location, usernameaio, keyaio },
+      { new: true, runValidators: true }
     );
+
     if (!device) {
-      return res.status(404).json({ message: 'Không tìm thấy thiết bị' });
+      return res.status(404).json({
+        success: false,
+        error: 'Không tìm thấy thiết bị'
+      });
     }
-    res.json(device);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+
+    // Update MQTT connection if credentials changed
+    mqttService.updateCredentials(usernameaio, keyaio);
+
+    res.status(200).json({
+      success: true,
+      data: device
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
   }
 };
 

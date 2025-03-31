@@ -3,23 +3,33 @@ const mongoose = require('mongoose');
 const DeviceSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
-  },
-  type: {
-    type: String,
-    required: true,
-    enum: ['PUMP', 'SENSOR']
-  },
-  status: {
-    type: String,
-    required: true,
-    enum: ['ACTIVE', 'INACTIVE', 'MAINTENANCE'],
-    default: 'INACTIVE'
+    required: [true, 'Vui lòng nhập tên thiết bị']
   },
   location: {
     type: String,
-    required: true,
-    default: 'Undefined'
+    required: [true, 'Vui lòng nhập vị trí thiết bị']
+  },
+  usernameaio: {
+    type: String,
+    required: [true, 'Vui lòng nhập Adafruit username']
+  },
+  keyaio: {
+    type: String,
+    required: [true, 'Vui lòng nhập Adafruit key']
+  },
+  feeds: {
+    temperature: {
+      type: String,
+      default: '0'
+    },
+    humidity: {
+      type: String,
+      default: '0'
+    },
+    soil: {
+      type: String,
+      default: '0'
+    }
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,

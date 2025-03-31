@@ -1,0 +1,117 @@
+{
+  "Login": {
+    "Login": "Đăng nhập",
+    "Sologan": "Tưới nước thông minh, tương lai xanh!",
+    "LoginSubtitle": "Nhập tên tài khoản và mật khẩu để đăng nhập!",
+    "LoginForUser": "Đăng nhập",
+    "Email": "Email",
+    "Password": "Mật khẩu",
+    "PasswordPlaceholder": "Nhập mật khẩu...",
+    "Success": "Đăng nhập thành công",
+    "Fail": "Đăng nhập thất bại, vui lòng kiểm tra lại tài khoản / mật khẩu",
+    "MissingField": "Vui lòng điền đầy đủ tài khoản và mật khẩu",
+    "YetRegister":"Bạn chưa có tài khoản?",
+    "Register":" Đăng ký ngay.",
+    "Forgot":"Quên mật khẩu?"
+  },
+  "Register":{
+    "Register":"Đăng ký",
+    "RegisterSubtitle": "Nhập thông tin đăng ký của bạn!",
+    "Sologan": "Tưới nước thông minh, tương lai xanh!",
+    "Success": "Đăng ký thành công",
+    "Fail": "Đăng ký thất bại",
+    "MissingField": "Vui lòng điền đầy đủ thông tin",
+    "RePasswordFail":"Mật khẩu chưa trùng khớp",
+    "Username": "Tên tài khoản",
+    "UsernamePlaceholder": "Nhập tên tài khoản...",
+    "Email":"Email",
+    "Password": "Mật khẩu",
+    "PasswordPlaceholder": "Nhập mật khẩu...",
+    "RePassword": "Nhập lại mật khẩu",
+    "RePasswordPlaceholder": "Nhập lại mật khẩu...",
+    "AlreadyRegister":"Bạn đã có tài khoản?",
+    "Login":"Đăng nhập ngay."
+  },
+  "SensorData":{
+    "temperature":"Nhiệt độ",
+    "humidity":"Độ ẩm",
+    "withcondition":"Điều kiện kích hoạt",
+    "temperaturestart":"Nhiệt độ bắt đầu",
+    "temperaturestop":"Nhiệt độ dừng",
+    "humiditystart":"Độ ẩm bắt đầu",
+    "humiditystop":"Độ ẩm dừng",
+    "pump":"Máy bơm",
+    "speed":"tốc độ"
+  },
+  "Routes": {
+   "Management":"Quản lý",
+   "sensor_data": "Dữ liệu cảm biến",
+   "devices":"Thiết bị"
+  },
+  "Notification": {
+    "DefaultTitle": "Thông báo",
+    "DefaultCloseButton": "Đóng",
+    "DefaultSubmitButton": "Xác nhận"
+  },
+  "InputField": {
+    "DefaultSelectc": "Chọn...",
+    "DefaultSelectNoOptions": "Không có lựa chọn phù hợp",
+    "DefaultSelectSearchPlaceHolder": "Tìm kiếm...",
+    "DefaultTextPlaceHolder": "Nhập..."
+  },
+  "Table": {
+    "DefaultSearchPlaceHolder": "Tìm...",
+    "DefaultPageMessage": "Vui lòng nhập trang muốn đến",
+    "DefaultSizePerPage": "Hiển thị:",
+    "DefaultNoDataMessage": "Không có dữ liệu",
+    "DefaultNoDataValue": "Không có thông tin"
+  },
+  "Navbar": {
+    "Search": "Chat AI",
+    "Search2": "Hỏi AI...",
+    "Login": "Đang đăng nhập bằng",
+    "ViewInfo": "Xem thông tin",
+    "ChangePass": "Đổi mật khẩu",
+    "Logout": "Đăng xuất",
+    "LogoutMessage": "Xác nhận thoát phiên đăng nhập?",
+    "InfoTitle": "Thông tin tài khoản",
+    "FirstMessage": "## ⚠️ Lưu ý: **Đây chỉ là một ChatBot sử dụng API bên thứ 3.**\n\n🚫 *Không thể trả lời các câu hỏi liên quan đến dữ liệu của doanh nghiệp.*",
+    "Password":"Mật khẩu",
+    "NewPassword":"Mật khẩu mới",
+    "Re-NewPassword":"Mật khẩu mới",
+    "PasswordPlaceHolder":"Nhập mật khẩu hiện tại",
+    "NewPasswordPlaceHolder":"Nhập mật khẩu mới",
+    "Re-NewPasswordPlaceHolder":"Nhập lại mật khẩu mới",
+    "MissingField": "Vui lòng điền đầy đủ thông tin",
+    "missemail":"Không lấy được email",
+    "Success":"Dổi mật khẩu thành công",
+    "fail":"Đổi mật khẩu thất bại",
+    "Enter":"Xác nhận",
+    "checkpassworfail":"Mật khẩu mới không khớp"
+
+  },
+  "NotFound": {
+    "Title": "404 - Lỗi",
+    "Subtitle": "Không tìm thấy trang yêu cầu",
+    "Goback": "Quay lại"
+  },
+  "LoggedIn": {
+    "Message": "Vui lòng đăng nhập để tiếp tục"
+  },
+ 
+  "TableCustomButton": {
+    "Add": "Thêm",
+    "Delete": "Xoá",
+    "Reload": "Tải lại"
+  },
+  "Components":{
+    "temperature":"Nhiệt độ",
+    "humidity":"Độ ẩm",
+    "temperatureUnit":"°C",
+    "humidityUnit":"%",
+    "on":"Bật",
+    "off": "Tắt",
+    "adddevice":"Thêm thiết bị"
+
+  }
+}

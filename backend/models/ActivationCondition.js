@@ -6,11 +6,6 @@ const ActivationConditionSchema = new mongoose.Schema({
     ref: 'Device',
     required: true
   },
-  waterProcessId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'WaterProcess',
-    required: true
-  },
   description: {
     type: String,
     required: true

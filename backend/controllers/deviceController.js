@@ -1,11 +1,32 @@
 const Device = require('../models/Device');
 const mqttService = require('../services/mqttService');
+const WaterProcess = require('../models/WaterProcess');
+const ActivationCondition = require('../models/ActivationCondition');
+const SensorData = require('../models/SensorData');
+const History = require('../models/History');
 
-// Get all devices - không cần filter theo userId
+// Get all devices
 exports.getAllDevices = async (req, res) => {
   try {
-    const devices = await Device.find();
-    res.json(devices);
+    const devices = await Device.find()
+      .populate({
+        path: 'userId',
+        select: 'username email -_id'
+      });
+
+    // Lấy thêm data từ các collection liên quan
+    const devicesWithData = await Promise.all(devices.map(async (device) => {
+      const waterProcesses = await WaterProcess.find({ deviceId: device._id });
+      const conditions = await ActivationCondition.find({ deviceId: device._id });
+      
+      return {
+        ...device._doc,
+        waterProcesses,
+        conditions
+      };
+    }));
+
+    res.json(devicesWithData);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -24,12 +45,11 @@ exports.getDevice = async (req, res) => {
   }
 };
 
-// Create device
+// Create device 
 exports.createDevice = async (req, res) => {
   try {
     const { name, location, usernameaio, keyaio } = req.body;
 
-    // Validate required fields
     if (!name || !location || !usernameaio || !keyaio) {
       return res.status(400).json({
         success: false,
@@ -37,10 +57,10 @@ exports.createDevice = async (req, res) => {
       });
     }
 
-    // Create new device
+    // Tạo device mới
     const device = new Device({
       name,
-      location,
+      location, 
       usernameaio,
       keyaio,
       feeds: {
@@ -53,16 +73,50 @@ exports.createDevice = async (req, res) => {
 
     const savedDevice = await device.save();
 
-    // Initialize MQTT connection for the new device
+    // Tạo water process mặc định
+    const waterProcess = new WaterProcess({
+      deviceId: savedDevice._id,
+      startTime: new Date(),
+      duration: 30,
+      tempControlled: false,
+      humidControlled: false,
+      manualControl: true,
+      pumpSpeed: 0
+    });
+    await waterProcess.save();
+
+    // Tạo activation condition mặc định
+    const condition = new ActivationCondition({
+      deviceId: savedDevice._id,
+      description: 'Điều kiện mặc định',
+      conditions: {
+        temperature: {
+          min: 25,
+          max: 30
+        },
+        humidity: {
+          min: 55,
+          max: 60
+        }
+      }
+    });
+    await condition.save();
+
+    // Initialize MQTT
     mqttService.updateCredentials(usernameaio, keyaio);
 
     res.status(201).json({
       success: true,
-      data: savedDevice
+      data: {
+        device: savedDevice,
+        waterProcess,
+        condition
+      }
     });
+
   } catch (error) {
     res.status(400).json({
-      success: false,
+      success: false, 
       error: error.message
     });
   }
@@ -104,11 +158,22 @@ exports.updateDevice = async (req, res) => {
 // Delete device - không cần filter theo userId
 exports.deleteDevice = async (req, res) => {
   try {
+    // Delete related collections first
+    await Promise.all([
+      WaterProcess.deleteMany({ deviceId: req.params.id }),
+      ActivationCondition.deleteMany({ deviceId: req.params.id }),
+      SensorData.deleteMany({ deviceId: req.params.id }),
+      History.deleteMany({ deviceId: req.params.id })
+    ]);
+
+    // Delete the device
     const device = await Device.findByIdAndDelete(req.params.id);
+    
     if (!device) {
       return res.status(404).json({ message: 'Không tìm thấy thiết bị' });
     }
-    res.json({ message: 'Đã xóa thiết bị thành công' });
+
+    res.json({ message: 'Đã xóa thiết bị và các dữ liệu liên quan' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

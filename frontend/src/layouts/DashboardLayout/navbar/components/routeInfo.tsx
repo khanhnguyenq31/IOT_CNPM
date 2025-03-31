@@ -37,7 +37,7 @@ const RouteInfo = () => {
                     className="text-sm font-normal text-navy-700 hover:underline dark:text-white dark:hover:text-white"
                     href=" "
                 >
-                    {intl("home")}
+                    {intl("Management")}
                     <span className="mx-1 text-sm text-navy-700 hover:text-navy-700 dark:text-white">
                         {" "}
                         /{" "}

@@ -1,30 +1,26 @@
+import { UserOperation , ResetPasswordDto } from '@/services/user.service';
 import { getTokenFromCookie } from '@/utils/token';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
 export const resetPassword = createAsyncThunk<
-    { success: boolean }, // Adjust the return type to match the response structure
-    ResetPasswordPayload,
+    { success: boolean },
+    ResetPasswordDto,
     { rejectValue: RejectedValue }
 >(
     'auth/resetPassword',
     async (payload, { rejectWithValue }) => {
         try {
-            const token = getTokenFromCookie();
-            const response = await fetch('http://localhost:5000/api/users/reset-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`, // Add the Authorization header
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                return rejectWithValue(errorData as RejectedValue);
-            }
-
-            return { success: true }; // Example return value, adjust based on your API
+            const UserOp = new UserOperation();
+            const token =getTokenFromCookie();
+            if (!token) return rejectWithValue("");
+            const response = await UserOp.resetPassword(payload , token);
+            if (response && response.success) {
+                // Nếu API trả về thành công, trả về success
+                return { success: true };
+            } else {
+                // Nếu API trả về lỗi, trả về message lỗi
+                return rejectWithValue(response?.message || "Failed to reset password");
+            } 
         } catch (error) {
             return rejectWithValue("Network error occurred");
         }

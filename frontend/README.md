@@ -1,10 +1,10 @@
-# Dự Án Web Employees Expense Management
+# Dự Án Web SensorPump
 
-Chào mừng bạn đến với dự án Web Employees Expense Management! Dưới đây là cấu trúc thư mục của dự án cùng với các mô tả chi tiết về từng thư mục:
+Chào mừng bạn đến với dự án Web SensorPump! Dưới đây là cấu trúc thư mục của dự án cùng với các mô tả chi tiết về từng thư mục:
 
 ## Cấu trúc Thư mục
 
-employees_expense_management
+SensorPump
 
 ├── public/               # Các tài nguyên tĩnh (hình ảnh, fonts, v.v.) sẽ được phục vụ trực tiếp
 

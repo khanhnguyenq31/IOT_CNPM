@@ -1,6 +1,7 @@
 
 declare type ResetPasswordPayload = {
-    email: string;
+    email:string;
+    password:string;
     newPassword:string;
 };
 

@@ -136,7 +136,7 @@ const SensorDataMain = () => {
                 <Slider value={humiditySpeed} onChange={sethumiditySpeed} />
               </div>
             )}
-            {(isTemperatureOn || isHumidityOn) && (
+            {/* {(isTemperatureOn || isHumidityOn) && (
               <CustomButton2
                 version="1"
                 color="error"
@@ -146,7 +146,7 @@ const SensorDataMain = () => {
               >
                 {loading ? <LoadingUI /> : intl("Enter")}
               </CustomButton2>
-            )}
+            )} */}
           </Container>
         )}
       </div>

@@ -58,10 +58,7 @@ const SidebarLinks = ({ onClickRoute }: Props) => {
   };
 
   const createLinks = (routes: any) => {
-    const employeeRoute = routes.filter((route: { path: string }) => ["bills", "bills_history"].includes(route.path));
-    const managerRoute = routes.filter((route: { path: string }) => ["pending_bills"].includes(route.path));
-    const financialManagerRoute = routes.filter((route: { path: string }) => ["pending_bills"].includes(route.path));
-    const adminRoute = routes.filter((route: { path: string }) => ["managent_account"].includes(route.path));
+    const employeeRoute = routes.filter((route: { path: string }) => ["sensor_data", "devices"].includes(route.path));
     const renderLinks = (routes: any, startIndex: number, headerText: string) => (
       <div>
         <p className="font-semibold mb-2 pl-5 pt-2">{headerText}</p>
@@ -92,10 +89,7 @@ const SidebarLinks = ({ onClickRoute }: Props) => {
 
     return (
       <ul ref={sidebarRef} className="relative">
-        {renderLinks(employeeRoute, 0, intl("EmployeeRoute"))}
-        {renderLinks(managerRoute, 2, intl("ManagerRoute"))}
-        {renderLinks(financialManagerRoute, 3, intl("FinancialManagerRoute"))}
-        {renderLinks(adminRoute, 4, intl("AdminRoute"))}
+        {renderLinks(employeeRoute, 0, intl("Management"))}
         {indicatorStyle && (
           <motion.div
             className="absolute right-0 w-1 rounded-lg bg-[#1e8323] dark:bg-[#1e8323]"

@@ -6,28 +6,16 @@ const useRoutes = () => {
 
   return [
     {
-      name: t("bills"),
+      name: t("devices"),
       layout: "/dashboard",
-      path: "bills",
+      path: "devices",
       icon: <FaFileInvoice className="h-4 w-4" />,
     },
     {
-      name: t("bills_history"),
+      name: t("sensor_data"),
       layout: "/dashboard",
-      path: "bills_history",
+      path: "sensor_data",
       icon: <FaHistory className="h-4 w-4" />,
-    },
-    {
-      name: t("pending_bills"),
-      layout: "/dashboard",
-      path: "pending_bills",
-      icon: <FaFileInvoice className="h-4 w-4" />,
-    },
-    {
-      name: t("managent_account"),
-      layout: "/dashboard",
-      path: "managent_account",
-      icon: <FaUserCheck  className="h-4 w-4" />,
     },
   ];
 };

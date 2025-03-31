@@ -32,16 +32,21 @@
     "AlreadyRegister":"Bạn đã có tài khoản?",
     "Login":"Đăng nhập ngay."
   },
+  "SensorData":{
+    "temperature":"Nhiệt độ",
+    "humidity":"Độ ẩm",
+    "withcondition":"Điều kiện kích hoạt",
+    "temperaturestart":"Nhiệt độ bắt đầu",
+    "temperaturestop":"Nhiệt độ dừng",
+    "humiditystart":"Độ ẩm bắt đầu",
+    "humiditystop":"Độ ẩm dừng",
+    "pump":"Máy bơm",
+    "speed":"tốc độ"
+  },
   "Routes": {
-    "bills": "Hoá đơn",
-    "bills_history": "Lịch sử hoá đơn",
-    "EmployeeRoute": "Nhân viên",
-    "ManagerRoute": "Quản lý",
-    "FinancialManagerRoute": "Quản lý tài chính",
-    "AdminRoute": "Quản trị viên",
-    "home": "Trang chủ",
-    "pending_bills": "Hoá đơn chờ duyệt",
-    "managent_account": "Quản lý tài khoản"
+   "Management":"Quản lý",
+   "sensor_data": "Dữ liệu cảm biến",
+   "devices":"Thiết bị"
   },
   "Notification": {
     "DefaultTitle": "Thông báo",
@@ -49,7 +54,7 @@
     "DefaultSubmitButton": "Xác nhận"
   },
   "InputField": {
-    "DefaultSelectPlaceHolder": "Chọn...",
+    "DefaultSelectc": "Chọn...",
     "DefaultSelectNoOptions": "Không có lựa chọn phù hợp",
     "DefaultSelectSearchPlaceHolder": "Tìm kiếm...",
     "DefaultTextPlaceHolder": "Nhập..."
@@ -70,7 +75,20 @@
     "Logout": "Đăng xuất",
     "LogoutMessage": "Xác nhận thoát phiên đăng nhập?",
     "InfoTitle": "Thông tin tài khoản",
-    "FirstMessage": "## ⚠️ Lưu ý: **Đây chỉ là một ChatBot sử dụng API bên thứ 3.**\n\n🚫 *Không thể trả lời các câu hỏi liên quan đến dữ liệu của doanh nghiệp.*"
+    "FirstMessage": "## ⚠️ Lưu ý: **Đây chỉ là một ChatBot sử dụng API bên thứ 3.**\n\n🚫 *Không thể trả lời các câu hỏi liên quan đến dữ liệu của doanh nghiệp.*",
+    "Password":"Mật khẩu",
+    "NewPassword":"Mật khẩu mới",
+    "Re-NewPassword":"Mật khẩu mới",
+    "PasswordPlaceHolder":"Nhập mật khẩu hiện tại",
+    "NewPasswordPlaceHolder":"Nhập mật khẩu mới",
+    "Re-NewPasswordPlaceHolder":"Nhập lại mật khẩu mới",
+    "MissingField": "Vui lòng điền đầy đủ thông tin",
+    "missemail":"Không lấy được email",
+    "Success":"Dổi mật khẩu thành công",
+    "fail":"Đổi mật khẩu thất bại",
+    "Enter":"Xác nhận",
+    "checkpassworfail":"Mật khẩu mới không khớp"
+
   },
   "NotFound": {
     "Title": "404 - Lỗi",
@@ -80,25 +98,20 @@
   "LoggedIn": {
     "Message": "Vui lòng đăng nhập để tiếp tục"
   },
-  "BillsRoute": {
-    "amount": "Chi phí",
-    "type": "Loại hoá đơn",
-    "note": "Ghi chú lý do",
-    "INVOICE": "Hóa đơn",
-    "RECEIPT": "Biên lai",
-    "OTHER": "Khác",
-    "PENDING": "Đang chờ",
-    "APPROVED": "Đã duyệt",
-    "REJECTED": "Từ chối",
-    "Status": "Trạng thái",
-    "id": "ID hoá đơn",
-    "reason": "Lý do chấp nhận / từ chối",
-    "submit": "Xác nhận",
-    "action": "Chấp nhận / từ chối"
-  },
+ 
   "TableCustomButton": {
     "Add": "Thêm",
     "Delete": "Xoá",
     "Reload": "Tải lại"
+  },
+  "Components":{
+    "temperature":"Nhiệt độ",
+    "humidity":"Độ ẩm",
+    "temperatureUnit":"°C",
+    "humidityUnit":"%",
+    "on":"Bật",
+    "off": "Tắt",
+    "adddevice":"Thêm thiết bị"
+
   }
 }

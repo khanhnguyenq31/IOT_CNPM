@@ -1,3 +1,4 @@
+import { AuthOperation } from '@/services/auth.service';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: ForgotPasswordState = {
@@ -14,20 +15,10 @@ export const forgotPassword = createAsyncThunk<
     'auth/forgotPassword',
     async (payload, { rejectWithValue }) => {
         try {
-            const response = await fetch('http://localhost:5000/api/forgot-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload), // Convert payload to JSON
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json(); // Parse error response
-                return rejectWithValue(errorData as RejectedValue); // Handle error
-            }
+            const authOp = new AuthOperation();
+            const response = await authOp.forgotPassword(payload);
         } catch (error) {
-            return rejectWithValue(error as RejectedValue); // Handle network error
+            return rejectWithValue(error as RejectedValue);
         }
     }
 );

@@ -32,16 +32,21 @@
     "AlreadyRegister":"Already have an account?",
     "Login":"Login now."
 },
+"SensorData": {
+    "temperature": "Temperature",
+    "humidity": "Humidity",
+    "withcondition": "Activation Condition",
+    "temperaturestart": "Temperature Start",
+    "temperaturestop": "Temperature Stop",
+    "humiditystart": "Humidity Start",
+    "humiditystop": "Humidity Stop",
+    "pump": "Pump",
+    "speed": "Speed"
+  },
   "Routes": {
-    "bills": "Bills",
-    "EmployeeRoute": "Employee",
-    "ManagerRoute": "Manager",
-    "FinancialManagerRoute": "Financial Manager",
-    "AdminRoute": "Admin",
-    "home": "Home",
-    "bills_history": "Bills History",
-    "pending_bills": "Pending Bills",
-    "managent_account": "Managent Account"
+   "Management":"Management",
+   "sensor_data": "Sensor data",
+   "devices":"Devices"
   },
   "Notification": {
     "DefaultTitle": "Notification",
@@ -100,5 +105,15 @@
     "Add": "Add",
     "Delete": "Delete",
     "Reload": "Reload"
+  },
+  "Components": {
+    "temperature": "Temperature",
+    "humidity": "Humidity",
+    "temperatureUnit": "°C",
+    "humidityUnit": "%",
+    "on": "On",
+    "off": "Off",
+    "adddevice":"Add device"
   }
+
 }

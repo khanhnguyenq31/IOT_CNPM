@@ -19,7 +19,7 @@ const DashboardLayout = ({ children }: Readonly<{ children: React.ReactNode }>) 
                     {children}
                 </div>
             </main>
-            {/* <CheckUserLoggedIn /> */}
+            <CheckUserLoggedIn />
         </>
     );
 }

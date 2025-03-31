@@ -1,4 +1,6 @@
+import { AuthOperation } from '@/services/auth.service';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import {RegisterDto } from '@/services/auth.service';
 
 const initialState: RegisterState = {
     loading: false,
@@ -8,14 +10,22 @@ const initialState: RegisterState = {
 
 // Async thunk for user registration
 export const register = createAsyncThunk<
-    void,
-    RegisterPayload,
+{ success: boolean },
+    RegisterDto,
     { rejectValue: RejectedValue }
 >(
     'http://localhost:5000/api/register',
     async (payload, { rejectWithValue }) => {
-        try {
-            console.log(payload);
+        try {  
+            const authOp = new AuthOperation();
+            const response = await authOp.register(payload);
+            if (response && response.success) {
+                // Nếu API trả về thành công, trả về success
+                return { success: true };
+            } else {
+                // Nếu API trả về lỗi, trả về message lỗi
+                return rejectWithValue(response?.message || "Failed to reset password");
+            }
         } catch (error) {
             return rejectWithValue(error as RejectedValue);
         }

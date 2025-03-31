@@ -23,7 +23,7 @@ const AuthLeftContent = ({ isAnimated }: AuthLeftContentProps) => {
   const intl = useTranslations("Login");
   const dispatch = useDispatch<AppDispatch>();
   const { addNotification } = useNotifications();
-  const [account, setAccount] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isError, setIsError] = useState<boolean>(false);
   const { addDefaultNotification } = useDefaultNotification();
@@ -32,26 +32,29 @@ const AuthLeftContent = ({ isAnimated }: AuthLeftContentProps) => {
 
   const handleLogin = () => {
     const payload = {
-      username: account.trim(),
+      email: email.trim(),
       password: password.trim(),
     };
 
+    if (!email || !password) {
+      addNotification({ type: "error", message: intl("Email and password are required") });
+      return;
+    }
+    
     dispatch(login(payload)).then((data) => {
       if (login.fulfilled.match(data)) {
         addNotification({ type: "success", message: intl("Success") });
         setTimeout(() => {
-          router.push("/bills");
+          router.push("/devices");
         }, 1500);
       } else if (login.rejected.match(data)) {
         addNotification({ type: "error", message: intl("Fail") });
-        setAccount("");
-        setPassword("");
       }
     });
   };
 
   const handleSubmit = () => {
-    if (!password || !account) {
+    if (!password || !email) {
       setIsError(true);
       addDefaultNotification({ message: intl("MissingField") });
     } else {
@@ -72,13 +75,13 @@ const AuthLeftContent = ({ isAnimated }: AuthLeftContentProps) => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [account, password]);
+  }, [email, password]);
 
   useEffect(() => {
     const checkLoggedIn = () => {
       dispatch(fetchUserInfo()).then((data) => {
         if (fetchUserInfo.fulfilled.match(data)) {
-          router.push("/orders");
+          router.push("/devices");
         }
       });
     };
@@ -115,12 +118,12 @@ const AuthLeftContent = ({ isAnimated }: AuthLeftContentProps) => {
                   <p className="text-[#1e8323]">*</p>
                 </div>
               }
-              state={isError && !account ? "error" : ""}
+              state={isError && !email ? "error" : ""}
               placeholder="example@gmail.com"
               id="account"
               type="text"
-              value={account}
-              setValue={setAccount}
+              value={email}
+              setValue={setEmail}
               inputClassName="bg-lightContainer dark:!bg-darkContainerPrimary !rounded-xl h-12 border border-gray-200 dark:border-white/10"
             />
 
@@ -140,7 +143,7 @@ const AuthLeftContent = ({ isAnimated }: AuthLeftContentProps) => {
               inputClassName="bg-lightContainer dark:!bg-darkContainerPrimary !rounded-xl h-12 border border-gray-200 dark:border-white/10"
             />
             <div className="flex justify-end pr-3">
-              <Link href="/#">
+              <Link href="/forgot_password">
                 <button className="">
                   <p><i>{intl("Forgot")} </i> </p>
                 </button>

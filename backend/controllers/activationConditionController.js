@@ -5,8 +5,7 @@ const mqttService = require('../services/mqttService');
 exports.getAllConditions = async (req, res) => {
   try {
     const conditions = await ActivationCondition.find()
-      .populate('deviceId', 'name location')
-      .populate('waterProcessId', 'startTime duration');
+      .populate('deviceId', 'name location');
     res.json(conditions);
   } catch (err) {
     res.status(500).json({ message: err.message });

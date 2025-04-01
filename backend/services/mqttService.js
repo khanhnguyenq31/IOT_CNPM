@@ -7,100 +7,100 @@ const ActivationCondition = require('../models/ActivationCondition');
 
 class MqttService {
     constructor() {
-        this.username = process.env.ADAFRUIT_USERNAME; // Sử dụng từ biến môi trường
-        this.key = process.env.ADAFRUIT_KEY;
-        this.client = null;
-        // Kết nối ngay khi khởi tạo service
-        this.connect();
+        this.clients = {}; // Lưu trữ kết nối MQTT cho từng thiết bị
+        this.connectAllDevices(); // Tự động kết nối tất cả thiết bị khi khởi tạo
     }
 
-    updateCredentials(username, key) {
-        // Update credentials
-        this.username = username;
-        this.key = key;
-
-        // Disconnect existing connection if any
-        if (this.client) {
-            this.disconnect();
-        }
-
-        // Reconnect with new credentials
-        this.connect();
-        console.log('MQTT credentials updated and reconnected');
-    }
-
-    async createHistory(device, type, oldValue, newValue) {
+    // Lấy danh sách tất cả thiết bị từ MongoDB
+    async getAllDevices() {
         try {
-            const history = new History({
-                deviceId: device._id,
-                type: type === 'temperature' ? 'TEMPERATURE' : 'HUMIDITY',
-                oldValue,
-                newValue
-            });
-            await history.save();
-            console.log(`Created history record for ${device.name}: ${type} changed from ${oldValue} to ${newValue}`);
+            const devices = await Device.find({});
+            console.log('Danh sách thiết bị từ MongoDB:', devices);
+            return devices;
         } catch (error) {
-            console.error('Error creating history:', error);
+            console.error('Lỗi khi lấy danh sách thiết bị:', error);
+            throw error;
         }
     }
 
-    connect() {
+    // Kết nối tất cả thiết bị với MQTT
+    async connectAllDevices() {
         try {
-            const brokerUrl = 'mqtt://io.adafruit.com';
-            
-            if (this.client) {
-                this.client.end(true); // Force disconnect nếu đã có kết nối
-            }
-
-            console.log('Connecting with credentials:', {
-                username: this.username,
-                key: this.key
+            const devices = await this.getAllDevices();
+            devices.forEach(device => {
+                if (device.usernameaio && device.keyaio) {
+                    this.connect(device);
+                } else {
+                    console.warn(`Thiết bị ${device.name} thiếu thông tin đăng nhập MQTT`);
+                }
             });
-
-            this.client = mqtt.connect(brokerUrl, {
-                username: this.username,
-                password: this.key,
-                reconnectPeriod: 5000, // Thử kết nối lại sau 5s nếu mất kết nối
-                connectTimeout: 30000 // Tăng thời gian timeout
-            });
-
-            this.client.on('connect', () => {
-                console.log('Connected to Adafruit IO MQTT');
-                this.subscribeToFeeds();
-            });
-
-            this.client.on('error', (error) => {
-                console.error('MQTT connection error:', error);
-            });
-
-            this.client.on('offline', () => {
-                console.log('MQTT client is offline, attempting to reconnect...');
-            });
-
-            this.client.on('message', async (topic, message) => {
-                await this.handleMessage(topic, message);
-            });
-
         } catch (error) {
-            console.error('Error in MQTT connect:', error);
+            console.error('Lỗi khi kết nối tất cả thiết bị:', error);
         }
     }
 
+    // Kết nối một thiết bị cụ thể với MQTT
+    connect(device) {
+        const brokerUrl = 'mqtt://io.adafruit.com';
+
+        // Kiểm tra thiết bị trước khi kết nối
+        if (!device || !device._id || !device.name) {
+            console.error('Lỗi: Device bị undefined hoặc thiếu thuộc tính quan trọng!');
+            return;
+        }
+
+        // Ngắt kết nối nếu thiết bị đã được kết nối trước đó
+        if (this.clients[device._id]) {
+            this.clients[device._id].end(true);
+        }
+
+        console.log(`Kết nối MQTT cho thiết bị: ${device.name}`);
+
+        const client = mqtt.connect(brokerUrl, {
+            username: device.usernameaio,
+            password: device.keyaio,
+            reconnectPeriod: 5000,
+            connectTimeout: 30000
+        });
+
+        client.on('connect', () => {
+            console.log(`Thiết bị ${device.name} đã kết nối MQTT`);
+        });
+
+        client.on('error', (error) => {
+            console.error(`Lỗi kết nối MQTT cho thiết bị ${device.name}:`, error);
+        });
+
+        client.on('message', async (topic, message) => {
+            await this.handleMessage(device, topic, message);
+        });
+
+        this.clients[device._id] = client; // Lưu client vào danh sách
+    }
+
+
+
+    // Gửi dữ liệu từ một thiết bị đến MQTT
     async publishToDeviceFeed(deviceId, feed, value) {
         try {
             const device = await Device.findById(deviceId);
             if (!device) {
-                throw new Error('Device not found');
+                throw new Error('Thiết bị không tồn tại');
+            }
+
+            const client = this.clients[deviceId];
+            if (!client) {
+                throw new Error(`Thiết bị ${device.name} chưa kết nối MQTT`);
             }
 
             const topic = `${device.usernameaio}/feeds/${feed}`;
-            this.client.publish(topic, value.toString());
-            console.log(`Published to ${topic}: ${value}`);
+            client.publish(topic, value.toString());
+            console.log(`Gửi dữ liệu đến ${topic}: ${value}`);
         } catch (error) {
-            console.error('Error publishing to device feed:', error);
-            throw error;
+            console.error('Lỗi khi gửi dữ liệu:', error);
         }
     }
+
 
     async publishThresholds(deviceId, conditions) {
         try {

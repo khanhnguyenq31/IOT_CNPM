@@ -102,9 +102,6 @@ exports.createDevice = async (req, res) => {
     });
     await condition.save();
 
-    // Initialize MQTT
-    mqttService.updateCredentials(usernameaio, keyaio);
-
     res.status(201).json({
       success: true,
       data: {
@@ -140,7 +137,6 @@ exports.updateDevice = async (req, res) => {
       });
     }
 
-    // Update MQTT connection if credentials changed
     mqttService.updateCredentials(usernameaio, keyaio);
 
     res.status(200).json({
